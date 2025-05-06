@@ -1,0 +1,21 @@
+{# job_detail.html #}
+{% extends 'base.html' %}
+{% block content %}
+  <h2>{{ job.title }}</h2>
+
+  <p><strong>Type:</strong> {{ job.get_job_type_display }}</p>
+  <p><strong>Location:</strong> {{ job.location }}</p>
+  <p>{{ job.description }}</p>
+
+  {% if user.is_authenticated and user.userprofile.role == 'seeker' %}
+    <a href="{% url 'apply_job' job.pk %}">Apply Now</a>
+  {% endif %}
+
+  {% if user.is_authenticated and user.userprofile.role == 'employer' and job.employer == user %}
+    <a href="{% url 'job_edit' job.pk %}">Edit</a>
+    <form method="post" action="{% url 'job_delete' job.pk %}" style="display:inline;">
+      {% csrf_token %}
+      <button type="submit">Delete</button>
+    </form>
+  {% endif %}
+{% endblock %}
